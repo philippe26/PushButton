@@ -1,0 +1,28 @@
+#######################################
+# Syntax Coloring Map For Buttons
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+PushButton                     KEYWORD1
+PushButtonGeneric              KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+isPressed                      KEYWORD2
+wasPressed                     KEYWORD2
+held                           KEYWORD2
+scan                           KEYWORD2
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+BUTTON_PULLUP                  LITERAL1
+BUTTON_PULLUP_INTERNAL         LITERAL1
+BUTTON_PULLDOWN                LITERAL1
