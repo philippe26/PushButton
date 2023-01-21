@@ -1,8 +1,8 @@
 
-#ifndef PUSHBUTTON_H
-#define PUSHBUTTON_H
+#ifndef __PUSHBUTTON_H__
+#define __PUSHBUTTON_H__
 
-#include <stdint.h>
+//#include <stdint.h>
 
 class PushButtonGeneric;// forward declaration 
 
@@ -40,7 +40,7 @@ extern PushButtonCollectionClass PushButtonCollection;
 // ******************************************************************************************************
 class PushButtonGeneric {
 public:
-		PushButtonGeneric(const char *name):name (_name)	{
+		PushButtonGeneric(const char *_name):name (_name)	{
 			pressedStartTime=0L; 
 			debounceDelayTime=0u;
 			clear();
@@ -54,6 +54,7 @@ public:
 		// setters/getters
 		void setDebounceDelay(unsigned int debounceDelay) {debounceDelayTime = debounceDelay;}
 		const char *getName() {return name;} 
+		uint8_t getState() {return state;}
 
 		//bool operator==(PushButtonGeneric &rhs) {return (this == &rhs);} // Compare a button object against this
 
@@ -71,6 +72,7 @@ public:
 		inline bool heldFor(unsigned long time) { return (holdTime() > time)?true:false;}
 		unsigned long getAndClear(); // return lastHoldTime and clear state of button
 		void clear() {buttonClicked=0;	pressedDuration=0L;}
+
 protected:
 		uint8_t buttonClicked; 
     unsigned long pressedStartTime,pressedDuration;  

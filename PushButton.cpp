@@ -30,6 +30,7 @@ void PushButtonGeneric::updateState(uint8_t newState)
 		 }
 	 }
 	 state = newState;	 
+	}
 }
 
 // ******************************************************************************************************
@@ -37,14 +38,14 @@ void PushButtonGeneric::updateState(uint8_t newState)
 // ******************************************************************************************************
 void PushButton::scan()
 {
-	 uint8_t read=digitalRead(pin);	 
-	 uint8_t state; 
-	 if (logicLow) 
+	uint8_t read=digitalRead(pin);	 
+	uint8_t state; 
+	if (logicLow) 
 	 	state = (read==LOW)?0:-1;
 	else 
 		state = (read==HIGH)?0:-1;	
 	 
-	 updateState(state);
+	updateState(state);
 }
 
 // ******************************************************************************************************
