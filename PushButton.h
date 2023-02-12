@@ -40,50 +40,56 @@ extern PushButtonCollectionClass PushButtonCollection;
 // ******************************************************************************************************
 class PushButtonGeneric {
 public:
-		PushButtonGeneric(const char *_name):name (_name)	{
+		PushButtonGeneric(const char *_name, bool logic_low=true):name (_name)	{
 			pressedStartTime=0L; 
 			debounceDelayTime=0u;
-			clear();
-			state = -1;			
+			clear();			
+			state = 0;			
 			#if USE_PushButtonCollection
 			// register myself to collection			
 			PushButtonCollection.registerChild(this);
-			#endif			
+			#endif		
+				
 		}
 
 		// setters/getters
-		void setDebounceDelay(unsigned int debounceDelay) {debounceDelayTime = debounceDelay;}
+		void setDebounceDelay(uint16_t debounceDelay) {debounceDelayTime = debounceDelay;}
 		const char *getName() {return name;} 
-		uint8_t getState() {return state;}
+		uint32_t getState() {return state;}
+		uint32_t getPressedState() {return pressedState;}
 
 		//bool operator==(PushButtonGeneric &rhs) {return (this == &rhs);} // Compare a button object against this
 
 		// get current state & time (useful to monitor in real time the button)
-		inline bool isPressed() { return (state!=-1);}     
+		inline bool isPressed() { return (state!=0);}     
 
     virtual void scan() {}
-		void updateState(uint8_t newState);
+		void updateState(uint32_t newState);
 		
 		// get past/history state & time (useful to catch action related to button)
     inline uint8_t wasPressed() {return buttonClicked;}			// return the number of press
-		inline unsigned long lastHoldTime() {return wasPressed()?pressedDuration:0L;}
-		inline unsigned long heldTime() {return (millis() - pressedStartTime); }
-		inline unsigned long holdTime() {return isPressed()?heldTime():0L;}
+		inline uint16_t lastHoldTime() {return wasPressed()?pressedDuration:0L;}
+		inline uint16_t heldTime() {return (millis() - pressedStartTime); }
+		inline uint16_t holdTime() {return isPressed()?heldTime():0L;}
 		inline bool heldFor(unsigned long time) { return (holdTime() > time)?true:false;}
-		unsigned long getAndClear(); // return lastHoldTime and clear state of button
-		void clear() {buttonClicked=0;	pressedDuration=0L;}
+		uint16_t getAndClear(); // return lastHoldTime and clear state of button
+		void clear() {buttonClicked=0u;	pressedDuration=0u;pressedState=0uL;}
 
 protected:
 		uint8_t buttonClicked; 
-    unsigned long pressedStartTime,pressedDuration;  
-    unsigned int debounceDelayTime; // max 65536 ms	
+    uint32_t pressedStartTime;
+		uint16_t pressedDuration;  
+		uint32_t pressedState;
+    uint16_t debounceDelayTime; // max 65536 ms	
+		
 private:
-		uint8_t state;
-			// State is always interpreted as low level logic, ie keyPressed is true when button exhibits a low level			
-			// state=0 means that all keys are pressed
-			// state=-1 (0xff) means that all keys are released
+		uint32_t state;
+			// State is always interpreted as high level logic 			
+			//    keyPressed is true when button exhibits a high level			
+			//    state=0 means that no keys are pressed
+			//    state!=0  means that one keys is pressed
 			// when a single key is used, be sure to toggle between 0 and -1
-
+		
 		const char * name;	
 };
 
@@ -98,7 +104,7 @@ public:
 	PushButton(uint8_t buttonPin, const char *_name="PIN", bool logic_low=true):PushButtonGeneric(_name)  {
 		pin = buttonPin;		
 		pinMode(pin, (logic_low)?INPUT_PULLUP:INPUT);								
-		logicLow = logic_low;	
+		logicLow = logic_low;
 	}
 
 	void scan() override;    		

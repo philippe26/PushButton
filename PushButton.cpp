@@ -5,28 +5,30 @@
 // ******************************************************************************************************
 //                CLASS PushButtonGeneric
 // ******************************************************************************************************
-unsigned long PushButtonGeneric::getAndClear()
+uint16_t PushButtonGeneric::getAndClear()
 {
-  unsigned long held = pressedDuration;
-  if (!wasPressed()) return 0L;  
+  uint16_t held = pressedDuration;
+  if (!wasPressed()) return 0u;  
   clear();
   return held;
 }
 
-void PushButtonGeneric::updateState(uint8_t newState)
+void PushButtonGeneric::updateState(uint32_t newState)
 {	
 	if (newState!=state) {
 		//state has changed
-		if (isPressed()) {    
-			//button just pressed , wait for release and count duration
-			//buttonPressed = true;
+		if (newState) {    
+			//button just pressed , wait for release and count duration			
 			pressedStartTime = millis();
 	 	} else {
 		 // Button released, compute duration 
 		 if (heldTime()>debounceDelayTime) {
-		 		pressedDuration = heldTime();		 
-					//buttonPressed=false;
-				buttonClicked++;
+		 		pressedDuration = heldTime();
+				if (pressedState == state) 					
+					buttonClicked++;
+				else 
+					buttonClicked=1;
+				pressedState = state;						
 		 }
 	 }
 	 state = newState;	 
@@ -41,9 +43,9 @@ void PushButton::scan()
 	uint8_t read=digitalRead(pin);	 
 	uint8_t state; 
 	if (logicLow) 
-	 	state = (read==LOW)?0:-1;
+	 	state = (read==LOW)?-1:0;
 	else 
-		state = (read==HIGH)?0:-1;	
+		state = (read==HIGH)?-1:0;	
 	 
 	updateState(state);
 }
